@@ -177,7 +177,7 @@ delete from "SKILL" where name='空中瑜伽';
     -- 5. 授課結束時間`end_at`設定為2024-11-25 16:00:00
     -- 6. 最大授課人數`max_participants` 設定為10
     -- 7. 授課連結設定`meeting_url`為 https://test-meeting.test.io
-    
+
 insert into "COURSE"(user_id,skill_id,name,start_at,end_at,max_participants,meeting_url)
 values
 	(
@@ -203,19 +203,60 @@ values
         -- 1. 預約人設為`王小明`
         -- 2. 預約時間`booking_at` 設為2024-11-24 16:00:00
         -- 3. 狀態`status` 設定為即將授課
+
+insert into "COURSE_BOOKING"(user_id,course_id,booking_at,status)
+select
+    "USER".id,
+    (select "COURSE".id from "COURSE"
+    inner join "USER" on "USER".id = "COURSE".user_id
+    and "USER".email = 'lee2000@hexschooltest.io'),
+    '2024-11-24 16:00:00',
+    '即將授課'
+from "USER"
+where "USER".email ='wXlTq@hexschooltest.io';
+
     -- 2. 新增： `好野人` 預約 `李燕容` 的課程
         -- 1. 預約人設為 `好野人`
         -- 2. 預約時間`booking_at` 設為2024-11-24 16:00:00
         -- 3. 狀態`status` 設定為即將授課
 
+insert into "COURSE_BOOKING"(user_id,course_id,booking_at,status)
+select
+    "USER".id,
+    (select "COURSE".id from "COURSE"
+    inner join "USER" on "USER".id = "COURSE".user_id
+    and "USER".email = 'lee2000@hexschooltest.io'),
+    '2024-11-24 16:00:00',
+    '即將授課'
+from "USER"
+where "USER".email ='richman@hexschooltest.io';
+
 -- 5-2. 修改：`王小明`取消預約 `李燕容` 的課程，請在`COURSE_BOOKING`更新該筆預約資料：
     -- 1. 取消預約時間`cancelled_at` 設為2024-11-24 17:00:00
     -- 2. 狀態`status` 設定為課程已取消
+
+update "COURSE_BOOKING"
+set cancelled_at='2024-11-24 17:00:00',
+    status ='課程已取消'
+from "USER"
+where "USER".email ='wXlTq@hexschooltest.io'
+and "USER".id = "COURSE_BOOKING".user_id;
 
 -- 5-3. 新增：`王小明`再次預約 `李燕容`   的課程，請在`COURSE_BOOKING`新增一筆資料：
     -- 1. 預約人設為`王小明`
     -- 2. 預約時間`booking_at` 設為2024-11-24 17:10:25
     -- 3. 狀態`status` 設定為即將授課
+
+insert into "COURSE_BOOKING"(user_id,course_id,booking_at,status)
+select
+    "USER".id,
+    (select "COURSE".id from "COURSE"
+    inner join "USER" on "USER".id = "COURSE".user_id
+    and "USER".email = 'lee2000@hexschooltest.io'),
+    '2024-11-24 17:10:25',
+    '即將授課'
+from "USER"
+where "USER".email ='wXlTq@hexschooltest.io';
 
 -- 5-4. 查詢：取得王小明所有的預約紀錄，包含取消預約的紀錄
 
