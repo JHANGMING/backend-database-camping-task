@@ -260,13 +260,47 @@ where "USER".email ='wXlTq@hexschooltest.io';
 
 -- 5-4. 查詢：取得王小明所有的預約紀錄，包含取消預約的紀錄
 
+select *
+from "COURSE_BOOKING"
+inner join "USER" on "USER".id = "COURSE_BOOKING".user_id
+where "USER".email = 'wXlTq@hexschooltest.io';
+
 -- 5-5. 修改：`王小明` 現在已經加入直播室了，請在`COURSE_BOOKING`更新該筆預約資料（請注意，不要更新到已經取消的紀錄）：
     -- 1. 請在該筆預約記錄他的加入直播室時間 `join_at` 設為2024-11-25 14:01:59
     -- 2. 狀態`status` 設定為上課中
 
+update "COURSE_BOOKING"
+set join_at='2024-11-25 14:01:59',
+	status ='上課中'
+from "USER","COURSE"
+where "USER".email ='wXlTq@hexschooltest.io'
+and "COURSE_BOOKING".user_id = "USER".id
+and "COURSE_BOOKING".course_id = "COURSE".id
+and "COURSE_BOOKING".status != '課程已取消';
+
 -- 5-6. 查詢：計算用戶王小明的購買堂數，顯示須包含以下欄位： user_id , total。 (需使用到 SUM 函式與 Group By)
 
+select
+	"USER".id as user_id,
+ 	"USER"."name",
+ 	sum("CREDIT_PURCHASE".purchased_credits) as total
+from "CREDIT_PURCHASE"
+inner join "USER" on "USER".id = "CREDIT_PURCHASE".user_id
+where "USER".email  = 'wXlTq@hexschooltest.io'
+group by "USER".id
+;
+
 -- 5-7. 查詢：計算用戶王小明的已使用堂數，顯示須包含以下欄位： user_id , total。 (需使用到 Count 函式與 Group By)
+
+select
+	"COURSE_BOOKING".user_id as user_id,
+ 	count(*) as total
+from "COURSE_BOOKING"
+inner join "USER" on "USER".id = "COURSE_BOOKING".user_id
+where "USER".email  = 'wXlTq@hexschooltest.io'
+and "COURSE_BOOKING".status NOT IN ('課程已取消', '即將授課')
+group by "COURSE_BOOKING".user_id
+;
 
 -- 5-8. [挑戰題] 查詢：請在一次查詢中，計算用戶王小明的剩餘可用堂數，顯示須包含以下欄位： user_id , remaining_credit
     -- 提示：
@@ -285,6 +319,8 @@ where "USER".email ='wXlTq@hexschooltest.io';
 -- 6. 後台報表
 -- 6-1 查詢：查詢專長為重訓的教練，並按經驗年數排序，由資深到資淺（需使用 inner join 與 order by 語法)
 -- 顯示須包含以下欄位： 教練名稱 , 經驗年數, 專長名稱
+
+
 
 -- 6-2 查詢：查詢每種專長的教練數量，並只列出教練數量最多的專長（需使用 group by, inner join 與 order by 與 limit 語法）
 -- 顯示須包含以下欄位： 專長名稱, coach_total
